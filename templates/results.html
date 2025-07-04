@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resultados da Análise - PlantAI</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary-green: #6CA68B;
+      --dark-green: #3B7A57;
+      --light-green: #B2D8C2;
+      --beige: #F1EFE9;
+      --text-color: #2F3E46;
+      --light-text-color: #5C6F68;
+      --background-overlay: rgba(0, 30, 15, 0.5);
+      --card-background: rgba(255, 255, 255, 0.9);
+      --danger-red: #D9534F;
+      --danger-red-light: #F2DEDE;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      color: var(--text-color);
+      background-color: var(--beige);
+      position: relative;
+      padding: 40px 20px;
+    }
+
+    .background-image {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://static.wixstatic.com/media/17d5a9_7755baf693f74bec97bb0bbf92985492~mv2.jpg/v1/fill/w_1920,h_1004,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/17d5a9_7755baf693f74bec97bb0bbf92985492~mv2.jpg');
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.75) saturate(1.2);
+      z-index: -2;
+      animation: zoomBackground 20s infinite alternate ease-in-out;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--background-overlay);
+      z-index: -1;
+    }
+
+    @keyframes zoomBackground {
+      from {
+        transform: scale(1);
+      }
+
+      to {
+        transform: scale(1.05);
+      }
+    }
+
+    .main-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    h1,
+    h2 {
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 2.8em;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    h2 {
+      font-size: 2.2em;
+      font-weight: 600;
+      margin-top: 40px;
+      margin-bottom: 30px;
+      color: var(--light-green);
+    }
+
+    .results-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+      justify-content: center;
+    }
+
+    .card {
+      background: var(--card-background);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(34, 49, 63, 0.25);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      overflow: hidden;
+      text-align: left;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(34, 49, 63, 0.3);
+    }
+
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: contain;
+      display: block;
+      background-color: #f0f8f0;
+    }
+
+    .card-content {
+      padding: 20px;
+    }
+
+    .card-content h3 {
+      margin-top: 0;
+      font-size: 1.4em;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .card-content h4 {
+      color: var(--light-text-color);
+      font-size: 1.1em;
+      margin-bottom: 10px;
+    }
+
+    .card.healthy .card-content h3 {
+      color: var(--dark-green);
+    }
+
+    .card.diseased .card-content h3 {
+      color: var(--danger-red);
+    }
+
+    .card-content pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      background-color: var(--danger-red-light);
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.95em;
+      line-height: 1.6;
+      color: var(--text-color);
+      border-left: 5px solid var(--danger-red);
+    }
+
+    .card.healthy {
+      border-bottom: 7px solid var(--primary-green);
+    }
+
+    .card.diseased {
+      border-bottom: 7px solid var(--danger-red);
+    }
+
+    .back-button {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+      color: white;
+      padding: 15px 40px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.2em;
+      cursor: pointer;
+      margin: 60px auto 20px auto;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+    }
+
+    .back-button:hover {
+      background: linear-gradient(135deg, var(--dark-green), #1B5E20);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      .results-container {
+        grid-template-columns: 1fr;
+        gap: 25px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 20px 15px;
+      }
+
+      h1 {
+        font-size: 2.2em;
+      }
+
+      h2 {
+        font-size: 1.8em;
+      }
+
+      .back-button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="background-image"></div>
+  <div class="overlay"></div>
+
+  <div class="main-container">
+    <h1>🌿 PlantAI - Resultados da Análise</h1>
+
+    {% if healthy_images %}
+    <h2>Folhas Saudáveis</h2>
+    <div class="results-container">
+      {% for filename in healthy_images %}
+      <div class="card healthy">
+        <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Imagem de Folha Saudável">
+        <div class="card-content">
+          <h3>Diagnóstico: Saudável</h3>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if diseased_results %}
+    <h2>Folhas Doentes</h2>
+    <div class="results-container">
+      {% for result in diseased_results %}
+      <div class="card diseased">
+        <img src="{{ url_for('uploaded_file', filename=result.filename) }}" alt="Imagem de Folha Doente">
+        <div class="card-content">
+          <h3>Diagnóstico: Doente</h3>
+          <h4>Sugestão do Gemini:</h4>
+          <pre>{{ result.suggestion }}</pre>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if not healthy_images and not diseased_results %}
+    <h2 style="color: white; font-weight: 400; margin-top: 50px;">Nenhuma imagem foi processada. Tente novamente.</h2>
+    {% endif %}
+
+    <a href="/" class="back-button">Analisar Novas Imagens</a>
+  </div>
+
+</body>
+
+</html>

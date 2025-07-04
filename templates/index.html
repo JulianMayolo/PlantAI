@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analisador de Folhas</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    
+    <style>
+        :root {
+            --primary-green: #6CA68B;
+            --dark-green: #3B7A57;
+            --light-green: #B2D8C2;
+            --beige: #F1EFE9;
+            --text-color: #2F3E46;
+            --light-text-color: #5C6F68;
+            --background-overlay: rgba(0, 30, 15, 0.5);
+            --card-background: rgba(255, 255, 255, 0.9);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-color);
+            overflow: hidden;
+            position: relative;
+            background-color: var(--beige);
+        }
+
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://static.wixstatic.com/media/17d5a9_7755baf693f74bec97bb0bbf92985492~mv2.jpg/v1/fill/w_1920,h_1004,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/17d5a9_7755baf693f74bec97bb0bbf92985492~mv2.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.75) saturate(1.2);
+            z-index: -2;
+            animation: zoomBackground 20s infinite alternate ease-in-out;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--background-overlay);
+            z-index: -1;
+        }
+
+        @keyframes zoomBackground {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        .container {
+            max-width: 550px;
+            background: var(--card-background);
+            padding: 60px 45px;
+            border-radius: 22px;
+            box-shadow: 0 10px 30px rgba(34, 49, 63, 0.25);
+            text-align: center;
+            animation: fadeInUp 1.2s ease-out;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            z-index: 1;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: var(--primary-green);
+            font-size: 2.7em;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+            letter-spacing: -0.5px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        p {
+            color: var(--light-text-color);
+            margin-bottom: 40px;
+            font-size: 1.15em;
+            line-height: 1.6;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .custom-file-upload {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            margin-bottom: 15px;
+            border: none;
+        }
+
+        .custom-file-upload:hover {
+            background: linear-gradient(135deg, var(--dark-green), #1B5E20);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        #file-name-display {
+            display: block;
+            color: var(--light-text-color);
+            font-size: 0.95em;
+            margin-top: 10px;
+            margin-bottom: 25px;
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, #88C0A9, #4F9D69);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.25em;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .submit-button:hover {
+            background: linear-gradient(135deg, #4F9D69, #3B7A57);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none; /* Inicia oculto */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .loader-content {
+            text-align: center;
+            color: white;
+            padding: 40px;
+            background: var(--card-background);
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+        }
+
+        .loader-content p {
+            color: var(--text-color);
+            font-size: 1.2em;
+            font-weight: 600;
+            margin: 20px 0 0 0;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 7px solid var(--light-green);
+            border-top-color: var(--dark-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 40px 25px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            .submit-button,
+            .custom-file-upload {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-image"></div>
+    <div class="overlay"></div>
+
+    <div class="container">
+        <div class="header-content">
+            <h1>🌿 PlantAI - Analisador de Saúde de Folhas</h1>
+        </div>
+        <p>Envie uma ou mais fotos de folhas para análise e descubra sua saúde.</p>
+        <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+            <label for="file-upload" class="custom-file-upload">
+                Selecionar Imagens
+                <input id="file-upload" type="file" name="photos" multiple required />
+            </label>
+            <span id="file-name-display">Nenhuma imagem selecionada.</span>
+            <br />
+            <button type="submit" class="submit-button">Analisar Imagens</button>
+        </form>
+    </div>
+
+    <div id="loader" class="loader-overlay">
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <p>Analisando... Por favor, aguarde.</p>
+        </div>
+    </div>
+
+    <script>
+        // Script para exibir o nome dos arquivos selecionados
+        document.getElementById('file-upload').addEventListener('change', function () {
+            const display = document.getElementById('file-name-display');
+            if (this.files && this.files.length > 0) {
+                display.textContent = this.files.length === 1
+                    ? `1 imagem selecionada: ${this.files[0].name}`
+                    : `${this.files.length} imagens selecionadas.`;
+            } else {
+                display.textContent = 'Nenhuma imagem selecionada.';
+            }
+        });
+
+        // --- LÓGICA PARA EXIBIR O INDICADOR DE CARREGAMENTO ---
+        const uploadForm = document.getElementById('upload-form');
+        const loader = document.getElementById('loader');
+        const fileInput = document.getElementById('file-upload');
+
+        uploadForm.addEventListener('submit', function(event) {
+            // Verifica se algum arquivo foi selecionado.
+            // O atributo 'required' já impede o envio, mas esta é uma segurança adicional.
+            if (fileInput.files.length > 0) {
+                // Se houver arquivos, mostra a tela de carregamento.
+                loader.style.display = 'flex';
+            }
+        });
+    </script>
+</body>
+</html>
